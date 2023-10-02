@@ -13,12 +13,16 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                ForEach(0..<cardCount, id: \.self) { index in
-                    CardView(content: emojies[index])
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]) {
+                    ForEach(0..<cardCount, id: \.self) { index in
+                        CardView(content: emojies[index])
+                    }
+                    .aspectRatio(2/3, contentMode: .fit)
                 }
+                .foregroundStyle(.orange)
             }
-            .foregroundStyle(.orange)
+            Spacer()
             HStack {
                 Button(action: {
                     cardCount -= 1
@@ -49,13 +53,13 @@ struct CardView: View {
     var body: some View {
         let base = RoundedRectangle(cornerRadius: 12)
         ZStack {
-            if isFaceUp {
+            Group {
                 base.fill(.white)
                 base.strokeBorder(lineWidth: 3)
                 Text(content).font(.largeTitle)
-            } else {
-                base
             }
+            .opacity(isFaceUp ? 1 : 0)
+            base.opacity(isFaceUp ? 0 : 1)
         }
         .onTapGesture {
             isFaceUp.toggle()
