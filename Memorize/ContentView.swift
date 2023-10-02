@@ -8,14 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
+    let emojies = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁"]
+    @State var cardCount = 4
+    
     var body: some View {
-        HStack {
-            CardView()
-            CardView()
-            CardView()
-            CardView()
+        VStack {
+            HStack {
+                ForEach(0..<cardCount, id: \.self) { index in
+                    CardView(content: emojies[index])
+                }
+            }
+            .foregroundStyle(.orange)
+            HStack {
+                Button(action: {
+                    cardCount -= 1
+                }, label: {
+                    Image(systemName: "minus.circle")
+                })
+                Spacer()
+                Button(action: {
+                    cardCount += 1
+                }, label: {
+                    Image(systemName: "plus.circle")
+                })
+            }
+            .imageScale(.large)
+            .font(.largeTitle)
         }
-        .foregroundStyle(.orange)
         .padding()
     }
 }
@@ -25,6 +44,7 @@ struct ContentView: View {
 }
 
 struct CardView: View {
+    var content: String
     @State var isFaceUp = false
     var body: some View {
         let base = RoundedRectangle(cornerRadius: 12)
@@ -32,7 +52,7 @@ struct CardView: View {
             if isFaceUp {
                 base.fill(.white)
                 base.strokeBorder(lineWidth: 3)
-                Text("🐶").font(.largeTitle)
+                Text(content).font(.largeTitle)
             } else {
                 base
             }
