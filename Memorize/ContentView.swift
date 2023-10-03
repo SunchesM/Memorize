@@ -8,23 +8,34 @@
 import SwiftUI
 
 struct ContentView: View {
-    let emojies = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁"]
+    let emojies = [
+        ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁"],
+        ["🌵", "🎄", "🌲", "🌳", "🌴", "🪵", "🌱", "🌿", "☘️", "🍀", "🎍", "🪴"],
+        ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱", "🪀", "🏓"]
+    ]
+    
+    let theme = [0, 1, 2]
+    @State var selectedTheme = 0
+    
     @State var cardCount = 4
     var body: some View {
-        VStack {
-            ScrollView {
-                cards
+        NavigationStack {
+            VStack {
+                ScrollView {
+                    cards
+                }
+                Spacer()
+                cardCountAdjusters
             }
-            Spacer()
-            cardCountAdjusters
+            .navigationTitle("Memorize")
+            .padding()
         }
-        .padding()
     }
     
     var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]) {
             ForEach(0..<cardCount, id: \.self) { index in
-                CardView(content: emojies[index])
+                CardView(content: emojies[selectedTheme][index])
                     .aspectRatio(2/3, contentMode: .fit)
             }
         }
@@ -35,10 +46,20 @@ struct ContentView: View {
         HStack {
             cardRemover
             Spacer()
+            themeView
+            Spacer()
             cardAdder
         }
         .imageScale(.large)
         .font(.largeTitle)
+    }
+    
+    var themeView: some View {
+        Picker("Change theme", selection: $selectedTheme) {
+            ForEach(theme, id: \.self) {
+                Text("\($0)")
+            }
+        }
     }
     
     func cardCountAdjuster(by offset: Int, symbol: String) -> some View {
@@ -47,7 +68,7 @@ struct ContentView: View {
         }, label: {
             Image(systemName: symbol)
         })
-        .disabled(cardCount + offset < 1 || cardCount + offset > emojies.count)
+        .disabled(cardCount + offset < 1 || cardCount + offset > emojies[selectedTheme].count)
     }
     
     var cardRemover: some View {
